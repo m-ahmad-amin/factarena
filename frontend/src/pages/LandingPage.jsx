@@ -31,7 +31,7 @@ export default function LandingPage() {
           <span className="gradient-text-accent underline-effect">Reveal the truth.</span>
         </h2>
         <p className="hero-description">
-          A local multiplayer debate game powered by AI. Share a single device, face off with chess-style timers, and let our objective judge score your reasoning.
+          A multiplayer debate software powered by AI. Two players share a single device, engage in timed debates, and receive objective scoring based on the strength of their reasoning.
         </p>
 
         <div className="hero-cta">

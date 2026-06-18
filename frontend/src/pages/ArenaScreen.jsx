@@ -1,24 +1,24 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useGame } from '../context/GameContext';
-import Timer from '../components/Timer';
-import VoiceMic from '../components/VoiceMic';
-import { Send, Sparkles, MessageSquare, CornerRightDown } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { useGame } from "../context/GameContext";
+import Timer from "../components/Timer";
+import VoiceMic from "../components/VoiceMic";
+import { Send, Sparkles, MessageSquare, CornerRightDown } from "lucide-react";
 
 export default function ArenaScreen() {
   const { state, dispatch } = useGame();
   const { playerA, playerB, activePlayer, transcript, topic } = state;
-  const [inputText, setInputText] = useState('');
+  const [inputText, setInputText] = useState("");
   const [isMicListening, setIsMicListening] = useState(false);
-  
+
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  const activePlayerData = activePlayer === 'playerA' ? playerA : playerB;
+  const activePlayerData = activePlayer === "playerA" ? playerA : playerB;
   const isInputLocked = activePlayerData.time === 0 || state.isLoading;
 
   useEffect(() => {
     if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [transcript]);
 
@@ -26,7 +26,7 @@ export default function ArenaScreen() {
     if (inputRef.current && !isInputLocked) {
       inputRef.current.focus();
     }
-    setInputText(''); 
+    setInputText("");
   }, [activePlayer, isInputLocked]);
 
   const handleSubmit = (e) => {
@@ -35,12 +35,12 @@ export default function ArenaScreen() {
     const cleanText = inputText.trim();
     if (!cleanText || cleanText.length < 3) return;
 
-    dispatch({ type: 'SUBMIT_ARGUMENT', payload: cleanText });
-    setInputText('');
+    dispatch({ type: "SUBMIT_ARGUMENT", payload: cleanText });
+    setInputText("");
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
     }
@@ -51,29 +51,39 @@ export default function ArenaScreen() {
   };
 
   const handleManualSkip = () => {
-    if (window.confirm(`${activePlayerData.name}, do you want to pass your turn? Your clock will pause and switch to your opponent.`)) {
-      dispatch({ type: 'SUBMIT_ARGUMENT', payload: '[Passed Turn]' });
+    if (
+      window.confirm(
+        `${activePlayerData.name}, do you want to pass your turn? Your clock will pause and switch to your opponent.`,
+      )
+    ) {
+      dispatch({ type: "SUBMIT_ARGUMENT", payload: "[Passed Turn]" });
     }
   };
 
   const handleForceFinish = () => {
-    if (window.confirm('Ready to end the debate early and send arguments for AI judging?')) {
-      dispatch({ type: 'START_EVALUATION' });
+    if (
+      window.confirm(
+        "Ready to end the debate early and send arguments for AI judging?",
+      )
+    ) {
+      dispatch({ type: "START_EVALUATION" });
     }
   };
 
   return (
     <div className="arena-screen-container container animate-fade-in">
       {/* SaaS Alert Debate Topic Banner */}
-      <div className="arena-topic-card glass-panel">
+      {/* <div className="arena-topic-card glass-panel">
         <div className="topic-inner-layout">
           <MessageSquare size={16} className="text-indigo animate-pulse-slow" />
           <h2 className="arena-topic-text">Topic: "{topic}"</h2>
         </div>
-      </div>
+      </div> */}
 
       {/* Side-by-side Chess Timers */}
-      <Timer />
+      <div className="sticky-timer-wrapper">
+        <Timer />
+      </div>
 
       {/* Transcript Board */}
       <div className="transcript-board glass-panel">
@@ -84,40 +94,57 @@ export default function ArenaScreen() {
             </div>
             <h3>The Debate Arena is Live</h3>
             <p>
-              Each debater gets 1 minute of total chess time. The clock ticks down only on your turn. <strong>{playerA.name}</strong>, type or speak your argument to open the debate!
+              <b>Topic: </b>{topic}
             </p>
           </div>
         ) : (
           <div className="chat-feed-scrollable">
             {transcript.map((arg) => {
-              const isPlayerA = arg.player === 'playerA';
-              const playerColor = isPlayerA ? 'var(--color-player-a)' : 'var(--color-player-b)';
-              const alignClass = isPlayerA ? 'player-a-align' : 'player-b-align';
-              const initial = arg.playerName ? arg.playerName.trim().substring(0, 1).toUpperCase() : '?';
-              
+              const isPlayerA = arg.player === "playerA";
+              const playerColor = isPlayerA
+                ? "var(--color-player-a)"
+                : "var(--color-player-b)";
+              const alignClass = isPlayerA
+                ? "player-a-align"
+                : "player-b-align";
+              const initial = arg.playerName
+                ? arg.playerName.trim().substring(0, 1).toUpperCase()
+                : "?";
+
               return (
-                <div key={arg.id} className={`chat-bubble-wrapper ${alignClass} animate-fade-in`}>
+                <div
+                  key={arg.id}
+                  className={`chat-bubble-wrapper ${alignClass} animate-fade-in`}
+                >
                   <div className="bubble-row">
                     {isPlayerA && (
-                      <div className="bubble-avatar" style={{ backgroundColor: playerColor }}>
+                      <div
+                        className="bubble-avatar"
+                        style={{ backgroundColor: playerColor }}
+                      >
                         {initial}
                       </div>
                     )}
-                    
+
                     <div className="bubble-msg-container">
                       <div className="chat-bubble-header">
-                        <span className="bubble-player-name" style={{ color: playerColor }}>
+                        <span
+                          className="bubble-player-name"
+                          style={{ color: playerColor }}
+                        >
                           {arg.playerName}
                         </span>
                         <span className="bubble-metadata">
                           ⏱️ {arg.timeSpent}s
                         </span>
                       </div>
-                      <div 
+                      <div
                         className="chat-bubble-content"
-                        style={{ 
+                        style={{
                           borderColor: playerColor,
-                          background: isPlayerA ? 'rgba(99, 102, 241, 0.04)' : 'rgba(2, 132, 199, 0.04)'
+                          background: isPlayerA
+                            ? "rgba(99, 102, 241, 0.04)"
+                            : "rgba(2, 132, 199, 0.04)",
                         }}
                       >
                         {arg.text}
@@ -125,7 +152,10 @@ export default function ArenaScreen() {
                     </div>
 
                     {!isPlayerA && (
-                      <div className="bubble-avatar" style={{ backgroundColor: playerColor }}>
+                      <div
+                        className="bubble-avatar"
+                        style={{ backgroundColor: playerColor }}
+                      >
                         {initial}
                       </div>
                     )}
@@ -139,21 +169,29 @@ export default function ArenaScreen() {
       </div>
 
       {/* Floating Console Input Dock */}
-      <div 
+      <div
         className="arena-input-console glass-panel"
-        style={{ 
-          borderColor: isMicListening ? 'var(--accent-primary)' : 'var(--glass-border)',
-          boxShadow: isMicListening ? '0 10px 25px -5px rgba(79,70,229,0.1)' : undefined
+        style={{
+          borderColor: isMicListening
+            ? "var(--accent-primary)"
+            : "var(--glass-border)",
+          boxShadow: isMicListening
+            ? "0 10px 25px -5px rgba(79,70,229,0.1)"
+            : undefined,
         }}
       >
         <div className="input-console-header">
-          <span className="active-player-indicator" style={{ color: activePlayerData.color }}>
-            <span className="indicator-dot" style={{ backgroundColor: activePlayerData.color }}></span>
+          <span
+            className="active-player-indicator"
+            style={{ color: activePlayerData.color }}
+          >
+            <span
+              className="indicator-dot"
+              style={{ backgroundColor: activePlayerData.color }}
+            ></span>
             {activePlayerData.name}'s Turn
           </span>
-          <span className="instructions-hint">
-            Press Enter to submit turn
-          </span>
+          <span className="instructions-hint">Press Enter to submit turn</span>
         </div>
 
         <form onSubmit={handleSubmit} className="input-console-form">
@@ -161,7 +199,11 @@ export default function ArenaScreen() {
             ref={inputRef}
             rows={2}
             className="arena-input-textarea"
-            placeholder={isInputLocked ? 'Debate ended. Requesting AI analysis...' : `Write your response, ${activePlayerData.name}...`}
+            placeholder={
+              isInputLocked
+                ? "Debate ended. Requesting AI analysis..."
+                : `Write your response, ${activePlayerData.name}...`
+            }
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -170,7 +212,7 @@ export default function ArenaScreen() {
 
           <div className="input-console-actions">
             <div className="mic-action-group">
-              <VoiceMic 
+              <VoiceMic
                 onTranscriptChange={handleVoiceTranscript}
                 isListeningExternal={isMicListening}
                 onListeningStateChange={setIsMicListening}
@@ -179,30 +221,37 @@ export default function ArenaScreen() {
 
             <div className="action-buttons-group">
               {transcript.length >= 2 && (
-                <button 
-                  type="button" 
-                  onClick={handleForceFinish} 
+                <button
+                  type="button"
+                  onClick={handleForceFinish}
                   className="btn btn-secondary btn-force-eval"
                   title="Request AI judge scorecard early"
                 >
                   Judge Now
                 </button>
               )}
-              
-              <button 
-                type="button" 
-                onClick={handleManualSkip} 
+
+              <button
+                type="button"
+                onClick={handleManualSkip}
                 className="btn btn-secondary btn-skip"
                 disabled={isInputLocked}
               >
                 Pass Turn
               </button>
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="btn btn-primary btn-submit-arg"
-                style={{ backgroundColor: activePlayerData.color, boxShadow: `0 4px 10px ${activePlayerData.color}25` }}
-                disabled={isInputLocked || !inputText.trim() || inputText.trim().length < 3}
+                style={{
+                  backgroundColor: activePlayerData.color,
+                  boxShadow: `0 4px 10px ${activePlayerData.color}25`,
+                }}
+                disabled={
+                  isInputLocked ||
+                  !inputText.trim() ||
+                  inputText.trim().length < 3
+                }
               >
                 <span>Submit</span>
                 <Send size={13} />
@@ -255,6 +304,15 @@ export default function ArenaScreen() {
           padding: 20px;
           border-radius: 20px;
           background: var(--bg-secondary);
+        }
+
+        .sticky-timer-wrapper {
+          position: sticky;
+          top: 80px;
+          z-index: 50;
+          background: var(--bg-primary);
+          padding: 4px 0;
+          margin: 0 -4px;
         }
 
         .empty-transcript-state {

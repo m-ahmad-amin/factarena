@@ -1,23 +1,21 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
 
 export async function evaluateDebate(topic, players, transcript) {
   // If the transcript is completely empty, throw an error
   if (!transcript || transcript.length === 0) {
-    throw new Error(
-      "The debate has no arguments to evaluate! Please submit arguments before evaluating.",
-    );
+    throw new Error('The debate has no arguments to evaluate! Please submit arguments before evaluating.');
   }
-  console.log(API_BASE);
+
   const response = await fetch(`${API_BASE}/api/evaluate`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       topic,
       players,
-      transcript,
-    }),
+      transcript
+    })
   });
 
   if (!response.ok) {
@@ -30,15 +28,15 @@ export async function evaluateDebate(topic, players, transcript) {
 }
 
 export async function generateNicheTopic(customTopic) {
-  if (!customTopic || !customTopic.trim()) return "";
+  if (!customTopic || !customTopic.trim()) return '';
 
   try {
     const response = await fetch(`${API_BASE}/api/niche-topic`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ customTopic: customTopic.trim() }),
+      body: JSON.stringify({ customTopic: customTopic.trim() })
     });
 
     if (!response.ok) {
@@ -48,10 +46,7 @@ export async function generateNicheTopic(customTopic) {
     const data = await response.json();
     return data.topic || customTopic.trim();
   } catch (err) {
-    console.error(
-      "Failed to generate niche topic, using raw custom input:",
-      err,
-    );
+    console.error('Failed to generate niche topic, using raw custom input:', err);
     return customTopic.trim();
   }
 }
