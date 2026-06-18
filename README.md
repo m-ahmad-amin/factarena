@@ -1,7 +1,8 @@
 # 🏆 Fact Arena
 
 A multiplayer debate software powered by AI. Two players share a single device, engage in timed debates, and receive objective scoring based on the strength of their reasoning.
-**[▶ Live Demo](https://fact-arena.netlify.app)**
+**[▶ Live Demo](https://fact-arena.netlify.app)**    
+
 ![Fact Arena](https://res.cloudinary.com/dzzrxqiho/image/upload/v1781799298/Group_3_1_1_cnjdg0.png)
 
 ## ⚡ What is Fact Arena?
